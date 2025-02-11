@@ -1,0 +1,11 @@
+terraform {
+  required_providers { 
+%{ for provider_name, provider in provider_versions ~}
+    ${provider_name} = {
+      source = "${provider.source}"
+      version = "${provider.version}"
+    }
+
+%{~ endfor }
+  }
+}
