@@ -1,6 +1,6 @@
 terraform {
   required_providers { 
-%{ for provider_name, provider in provider_versions ~}
+%{ for provider_name, provider in required_providers ~}
     ${provider_name} = {
       source = "${provider.source}"
       version = "${provider.version}"

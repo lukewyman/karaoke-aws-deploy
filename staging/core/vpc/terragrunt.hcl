@@ -2,30 +2,11 @@ include "root" {
   path = find_in_parent_folders("root.hcl")
 }
 
-include "provider_versions" {
-  path = find_in_parent_folders("_common/provider_versions.hcl")
-  expose = true
-}
-
 locals {
-  required_versions = ["aws"]
-  provider_versions_template = include.provider_versions.locals.provider_versions_template
-  providers_dict = include.provider_versions.locals.provider_versions
-
-  provider_versions = {
-    for k, v in local.providers_dict : k => v if contains(local.required_versions, k)    
-  } 
-}
-
-generate "provider_versions" {
-
-  path = "provider_versions.tf"
-  if_exists = "overwrite"
-
-  contents = templatefile(local.provider_versions_template, {
-    provider_versions = local.provider_versions
-  })
-
+  environment_hcl = read_terragrunt_config(find_in_parent_folders("environment.hcl"))
+  environment = local.environment_hcl.locals.environment
+  aws_region_hcl = read_terragrunt_config(find_in_parent_folders("_common/aws_region.hcl"))
+  aws_region = local.aws_region_hcl.locals.region
 }
 
 terraform {
@@ -34,8 +15,8 @@ terraform {
 
 inputs = {
   app_name                               = "karaoke"
-  aws_region                             = "us-west-2"
-  environment                            = "stage"
+  aws_region                             = local.aws_region
+  environment                            = local.environment
   vpc_cidr_block                         = "10.0.0.0/16"
   vpc_create_database_subnet_route_table = true
   vpc_database_subnets                   = ["10.0.151.0/24", "10.0.152.0/24"]

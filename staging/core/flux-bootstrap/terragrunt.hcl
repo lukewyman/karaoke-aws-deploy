@@ -2,30 +2,11 @@ include "root" {
   path = find_in_parent_folders("root.hcl")
 }
 
-include "provider_versions" {
-  path = find_in_parent_folders("_common/provider_versions.hcl")
-  expose = true
-}
-
 locals {
-  required_versions = ["aws", "flux"]
-  provider_versions_template = include.provider_versions.locals.provider_versions_template
-  providers_dict = include.provider_versions.locals.provider_versions
-
-  provider_versions = {
-    for k, v in local.providers_dict : k => v if contains(local.required_versions, k)    
-  } 
-}
-
-generate "provider_versions" {
-
-  path = "provider_versions.tf"
-  if_exists = "overwrite"
-
-  contents = templatefile(local.provider_versions_template, {
-    provider_versions = local.provider_versions
-  })
-
+  environment_hcl = read_terragrunt_config(find_in_parent_folders("environment.hcl"))
+  environment = local.environment_hcl.locals.environment
+  aws_region_hcl = read_terragrunt_config(find_in_parent_folders("_common/aws_region.hcl"))
+  aws_region = local.aws_region_hcl.locals.region
 }
 
 terraform {
@@ -33,7 +14,6 @@ terraform {
 }
 
 dependency "eks" {
-
   config_path = "../eks"
 
   mock_outputs = {
@@ -47,11 +27,11 @@ dependency "eks" {
 
 inputs = {
   app_name = "karaoke"
-  aws_region = "us-west-2"
+  aws_region = local.aws_region
   cluster_ca_certificate = dependency.eks.outputs.cluster_certificate_authority_data
   cluster_endpoint = dependency.eks.outputs.eks_cluster_endpoint
   eks_cluster_id = dependency.eks.outputs.eks_cluster_id
-  environment = "stage"
+  environment = local.environment
   github_owner = "lukewyman"
   github_repository = "karaoke-gitops-flux"
 }
