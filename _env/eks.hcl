@@ -1,8 +1,8 @@
 locals {
   environment_hcl = read_terragrunt_config(find_in_parent_folders("environment.hcl"))
-  environment = local.environment_hcl.locals.environment
-  aws_region_hcl = read_terragrunt_config(find_in_parent_folders("_common/aws_region.hcl"))
-  aws_region = local.aws_region_hcl.locals.region
+  environment     = local.environment_hcl.locals.environment
+  aws_region_hcl  = read_terragrunt_config(find_in_parent_folders("_common/aws_region.hcl"))
+  aws_region      = local.aws_region_hcl.locals.region
 }
 
 terraform {
@@ -13,7 +13,7 @@ dependency "vpc" {
   config_path = "../vpc"
 
   mock_outputs = {
-    public_subnets = ["mock_subnet_1", "mock_subnet_2"]    
+    public_subnets = ["mock_subnet_1", "mock_subnet_2"]
   }
 
   mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
