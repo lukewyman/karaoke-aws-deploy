@@ -3,5 +3,5 @@ include "root" {
 }
 
 include "eks" {
-  path = find_in_parent_folders("_env/eks.hcl")
+  path = find_in_parent_folders("_env/dynamodb.hcl")
 }

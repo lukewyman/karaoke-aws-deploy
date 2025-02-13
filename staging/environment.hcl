@@ -1,3 +1,3 @@
 locals {
-  environment = "stage"
+  environment = "staging"
 }

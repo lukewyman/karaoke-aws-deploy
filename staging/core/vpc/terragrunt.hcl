@@ -5,3 +5,4 @@ include "root" {
 include "vpc" {
   path = find_in_parent_folders("_env/vpc.hcl")
 }
+
