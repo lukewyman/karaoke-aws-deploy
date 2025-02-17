@@ -6,7 +6,7 @@ locals {
 }
 
 terraform {
-  source = "github.com/lukewyman/karaoke-aws-resources.git//core/flux-bootstrap"
+  source = "github.com/lukewyman/karaoke-aws-resources.git//gitops/flux-bootstrap"
 }
 
 dependency "eks" {
