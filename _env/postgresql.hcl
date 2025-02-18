@@ -10,11 +10,12 @@ locals {
 }
 
 dependency "vpc" {
-  config_path = "../vpc"
+  config_path = "../../core/vpc"
 
   mock_outputs = {
-    private_subnets_cidr_blocks = ["", ""]
-    public_subnets_cidr_blocks = ["", ""]
+    database_subnets            = ["mock_subnet_1", "mock_subnet_2"]
+    private_subnets_cidr_blocks = ["0.0.0.0/0", "0.0.0.0/0"]
+    public_subnets_cidr_blocks = ["0.0.0.0/0", "0.0.0.0/0"]
     vpc_id = "mock_vpc_id"
   }
 
@@ -22,15 +23,15 @@ dependency "vpc" {
 }
 
 inputs = {
-  allocated_storage = 
+  allocated_storage = 20
   app_name    = "karaoke"
   aws_region  = local.aws_region
-  db_engine = 
-  db_engine_version = 
-  db_instance_type = 
-  db_port = 
-  db_storage_type = 
-  db_subnet_ids = 
+  db_engine = "postgres"
+  db_engine_version = "17.3"
+  db_instance_type = "db.t3.medium"
+  db_port = "5432"
+  db_storage_type = "gp3"
+  db_subnet_ids = dependency.vpc.outputs.database_subnets
   environment = local.environment
   private_subnets_cidr_blocks = dependency.vpc.outputs.private_subnets_cidr_blocks
   public_subnets_cidr_blocks = dependency.vpc.outputs.public_subnets_cidr_blocks

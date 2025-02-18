@@ -10,11 +10,12 @@ locals {
 }
 
 dependency "vpc" {
-  config_path = "../vpc"
+  config_path = "../../core/vpc"
 
   mock_outputs = {
-    private_subnets_cidr_blocks = ["", ""]
-    public_subnets_cidr_blocks = ["", ""]
+    database_subnets            = ["mock_subnet_1", "mock_subnet_2"]
+    private_subnets_cidr_blocks = ["0.0.0.0/0", "0.0.0.0/0"]
+    public_subnets_cidr_blocks = ["0.0.0.0/0", "0.0.0.0/0"]
     vpc_id = "mock_vpc_id"
   }
 
@@ -24,12 +25,12 @@ dependency "vpc" {
 inputs = {
   app_name    = "karaoke"
   aws_region  = local.aws_region
-  docdb_engine_version = 
-  docdb_instance_class = 
+  docdb_engine_version = "4.0.0"
+  docdb_instance_class = "db.t3.medium"
   docdb_instance_count = 1
-  docdb_port = 
-  docdb_subnet_ids = 
-  docdb_username = 
+  docdb_port = "27017"
+  docdb_subnet_ids = dependency.vpc.outputs.database_subnets
+  docdb_username = "mongo_admin"
   environment = local.environment
   private_subnets_cidr_blocks = dependency.vpc.outputs.private_subnets_cidr_blocks
   public_subnets_cidr_blocks = dependency.vpc.outputs.public_subnets_cidr_blocks
